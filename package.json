@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "type-graphql": "^0.17.5",
-    "typeorm": "^0.2.19"
-  }
-}
