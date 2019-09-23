@@ -8,11 +8,8 @@ import UserResolver from "./UserResolver";
 (async () => {
     const app = express();
     const port = 4000;
-
-    app.get("/",
-        (_request, response) => {
-            response.send("Empty get body.")
-        });
+    
+    CreateDatabase();
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
@@ -21,6 +18,11 @@ import UserResolver from "./UserResolver";
     });
 
     apolloServer.applyMiddleware({ app });
+
+    app.get("/",
+        (_request, response) => {
+            response.send("Empty get body.")
+        });
 
     app.listen(port,
         () => {
