@@ -6,11 +6,16 @@ import { User } from './entity/User';
 @Resolver()
 export default class UserResolver {
     @Query(() => String)
-    greetings() {
+    Greetings() {
         return "Greeting trevelers!";
     }
 
-    @Mutation(() => boolean)
+    @Query(() => [User])
+    GetAllUsers() {
+        return User.find();
+    }
+
+    @Mutation(() => Boolean)
     async register(
         @Arg('email') email: string,
         @Arg('password') password: string,
