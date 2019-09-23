@@ -20,7 +20,7 @@ export default class UserResolver {
         @Arg('email') email: string,
         @Arg('password') password: string,
     ) {
-        const hashedPassword = await hash(password, 23);
+        const hashedPassword = await hash(password, 8);
 
         try {
 
