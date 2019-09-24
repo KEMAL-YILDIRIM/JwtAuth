@@ -35,8 +35,6 @@ export class UserResolver {
         if (!valid)
             throw new Error('Incorrect password.');
 
-        console.log(res);
-
         res.cookie('jwtAuthCookie',
             sign({ userId: user.id }, 'secretJwtAuthenticationCookie', { expiresIn: '3d' }),
             { httpOnly: true });
