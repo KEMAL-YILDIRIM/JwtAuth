@@ -1,5 +1,6 @@
-import express from "express";
+import "dotenv/config";
 import "reflect-metadata";
+import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./resolvers/UserResolver";
@@ -10,6 +11,7 @@ import { createConnection } from "typeorm";
     const app = express();
     const port = 4000;
     await createConnection();
+    console.log(process.env.ACCESS_TOKEN_SECRET);
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({

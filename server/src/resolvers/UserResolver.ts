@@ -1,9 +1,9 @@
 import { compare, hash } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
 import { IExpressContext } from '../interfaces/IExpressContext';
 import { LoginResponse } from '../typeGraphQL/LoginResponse';
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { User } from '../entity/User';
+import { createRefreshToken, createAccessToken } from '../helpers/TokenProvider';
 
 @Resolver()
 export class UserResolver {
@@ -36,11 +36,11 @@ export class UserResolver {
             throw new Error('Incorrect password.');
 
         res.cookie('jwtAuthCookie',
-            sign({ userId: user.id }, 'secretJwtAuthenticationCookie', { expiresIn: '3d' }),
+            createRefreshToken(user),
             { httpOnly: true });
 
         return {
-            accessToken: sign({ userId: user.id }, 'secretJwtAuthentication', { expiresIn: '20m' })
+            accessToken: createAccessToken(user)
         };
     }
 
