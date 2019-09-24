@@ -1,10 +1,9 @@
 import { compare, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import { applicationContext } from 'src/interfaces/applicationContext';
+import { IExpressContext } from 'src/interfaces/IExpressContext';
+import { LoginResponse } from '../typeGraphQL/LoginResponse';
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { User } from '../entity/User';
-import { loginResponse } from 'src/typeGraphQL/loginResponse';
-
 
 @Resolver()
 export class UserResolver {
@@ -18,12 +17,12 @@ export class UserResolver {
         return User.find();
     }
 
-    @Mutation(() => loginResponse)
+    @Mutation(() => LoginResponse)
     async login(
         @Arg('email') email: string,
         @Arg('password') password: string,
-        @Ctx() { response }: applicationContext
-    ): Promise<loginResponse> {
+        @Ctx() { response }: IExpressContext
+    ): Promise<LoginResponse> {
         const user = await User.findOne({
             where: {
                 email
