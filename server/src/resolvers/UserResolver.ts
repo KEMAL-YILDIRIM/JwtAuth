@@ -1,6 +1,6 @@
 import { compare, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import { IExpressContext } from 'src/interfaces/IExpressContext';
+import { IExpressContext } from '../interfaces/IExpressContext';
 import { LoginResponse } from '../typeGraphQL/LoginResponse';
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { User } from '../entity/User';
@@ -21,7 +21,7 @@ export class UserResolver {
     async login(
         @Arg('email') email: string,
         @Arg('password') password: string,
-        @Ctx() { response }: IExpressContext
+        @Ctx() { res }: IExpressContext
     ): Promise<LoginResponse> {
         const user = await User.findOne({
             where: {
@@ -35,7 +35,9 @@ export class UserResolver {
         if (!valid)
             throw new Error('Incorrect password.');
 
-        response.cookie('jwtAuthCookie',
+        console.log(res);
+
+        res.cookie('jwtAuthCookie',
             sign({ userId: user.id }, 'secretJwtAuthenticationCookie', { expiresIn: '3d' }),
             { httpOnly: true });
 
