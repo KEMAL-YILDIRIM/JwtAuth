@@ -1,15 +1,22 @@
 import { compare, hash } from 'bcryptjs';
-import { IExpressContext } from '../interfaces/IExpressContext';
-import { LoginResponse } from '../typeGraphQL/LoginResponse';
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { User } from '../entity/User';
-import { createRefreshToken, createAccessToken } from '../helpers/TokenProvider';
+import { createAccessToken, createRefreshToken } from '../helpers/TokenProvider';
+import { IExpressContext } from '../interfaces/IExpressContext';
+import { IsAuthenticated } from '../Middlewares/IsAuthenticated';
+import { LoginResponse } from '../typeGraphQL/LoginResponse';
 
 @Resolver()
 export class UserResolver {
     @Query(() => String)
     Greetings() {
         return "Greeting trevelers!";
+    }
+
+    @Query(() => String)
+    @UseMiddleware(IsAuthenticated)
+    Authenticate(@Ctx() { payload }: IExpressContext) {
+        return `Your user number is : ${payload!.userId}`;
     }
 
     @Query(() => [User])
