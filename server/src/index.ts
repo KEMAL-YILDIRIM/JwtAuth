@@ -7,14 +7,15 @@ import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 import { UserResolver } from "./resolvers/UserResolver";
 import { verify } from "jsonwebtoken";
-import { createAccessToken } from "./helpers/TokenProvider";
+import { createAccessToken, createRefreshToken } from "./helpers/TokenProvider";
 import { User } from "./entity/User";
-import { setRefreshTokenCookie } from "./helpers/SetRefreshToken";
+import { setRefreshToken } from "./helpers/CookieManager";
+import { _constants } from "./helpers/Constants";
 
 
 (async () => {
     const app = express();
-    const port = 4000;
+    const port = _constants.AppServerPort;
     await createConnection();
 
     const apolloServer = new ApolloServer({
@@ -60,7 +61,13 @@ import { setRefreshTokenCookie } from "./helpers/SetRefreshToken";
                 accessToken: ''
             });
 
-        setRefreshTokenCookie(_response, user);
+        if (user.tokenVersion !== payload.tokenVersion)
+            return _response.send({
+                ok: false,
+                accessToken: ''
+            });
+
+        setRefreshToken(_response, createRefreshToken(user));
 
         return _response.send({
             ok: true,

@@ -1,8 +1,9 @@
 import { compare, hash } from 'bcryptjs';
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, Int, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { getConnection } from 'typeorm';
 import { User } from '../entity/User';
-import { setRefreshTokenCookie } from '../helpers/SetRefreshToken';
-import { createAccessToken } from '../helpers/TokenProvider';
+import { setRefreshToken } from '../helpers/CookieManager';
+import { createAccessToken, createRefreshToken } from '../helpers/TokenProvider';
 import { IExpressContext } from '../interfaces/IExpressContext';
 import { IsAuthenticated } from '../Middlewares/IsAuthenticated';
 import { LoginResponse } from '../typeGraphQL/LoginResponse';
@@ -43,11 +44,23 @@ export class UserResolver {
         if (!valid)
             throw new Error('Incorrect password.');
 
-        setRefreshTokenCookie(res, user);
+        setRefreshToken(res, createRefreshToken(user));
 
         return {
             accessToken: createAccessToken(user)
         };
+    }
+
+    @Mutation(() => Boolean)
+    async forgotPassword(
+        @Arg('userId', () => Int) userId: number) {
+
+        // revoke refresh token
+        await getConnection()
+            .getRepository(User)
+            .increment({ id: userId }, "tokenVersion", 1);
+
+        return true;
     }
 
     @Mutation(() => Boolean)
