@@ -1,7 +1,8 @@
 import { compare, hash } from 'bcryptjs';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { User } from '../entity/User';
-import { createAccessToken, createRefreshToken } from '../helpers/TokenProvider';
+import { setRefreshTokenCookie } from '../helpers/SetRefreshToken';
+import { createAccessToken } from '../helpers/TokenProvider';
 import { IExpressContext } from '../interfaces/IExpressContext';
 import { IsAuthenticated } from '../Middlewares/IsAuthenticated';
 import { LoginResponse } from '../typeGraphQL/LoginResponse';
@@ -42,9 +43,7 @@ export class UserResolver {
         if (!valid)
             throw new Error('Incorrect password.');
 
-        res.cookie('jwtAuthCookie',
-            createRefreshToken(user),
-            { httpOnly: true });
+        setRefreshTokenCookie(res, user);
 
         return {
             accessToken: createAccessToken(user)

@@ -3,5 +3,5 @@ import { Request, Response } from 'express';
 export interface IExpressContext {
     req: Request;
     res: Response;
-    payload? : { userId: string };
+    payload?: { userId: string };
 }
