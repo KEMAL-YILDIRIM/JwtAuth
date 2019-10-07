@@ -1,10 +1,7 @@
 import gql from 'graphql-tag';
-import * as React from 'react';
 import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactComponents from '@apollo/react-components';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 export type Maybe<T> = T | null;
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string,
@@ -56,6 +53,17 @@ export type User = {
   email: Scalars['String'],
 };
 
+export type RegisterMutationVariables = {
+  email: Scalars['String'],
+  password: Scalars['String']
+};
+
+
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'register'>
+);
+
 export type GreetingsQueryVariables = {};
 
 
@@ -65,17 +73,42 @@ export type GreetingsQuery = (
 );
 
 
+export const RegisterDocument = gql`
+    mutation Register($email: String!, $password: String!) {
+  register(email: $email, password: $password)
+}
+    `;
+export type RegisterMutationFn = ApolloReactCommon.MutationFunction<RegisterMutation, RegisterMutationVariables>;
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useRegisterMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        return ApolloReactHooks.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, baseOptions);
+      }
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = ApolloReactCommon.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const GreetingsDocument = gql`
     query Greetings {
   Greetings
 }
     `;
-export type GreetingsComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GreetingsQuery, GreetingsQueryVariables>, 'query'>;
-
-    export const GreetingsComponent = (props: GreetingsComponentProps) => (
-      <ApolloReactComponents.Query<GreetingsQuery, GreetingsQueryVariables> query={GreetingsDocument} {...props} />
-    );
-    
 
 /**
  * __useGreetingsQuery__

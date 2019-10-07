@@ -9,5 +9,5 @@ generates:
       - "typescript-react-apollo"
     config: #autogeneration configuration
       withHOC: false #higher order components
-      withComponents: false
+      withComponent: false
       withHooks: true
