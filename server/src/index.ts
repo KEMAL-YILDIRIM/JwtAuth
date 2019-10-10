@@ -1,21 +1,30 @@
-import "dotenv/config";
-import "reflect-metadata";
-import express from "express";
-import cookieParser from 'cookie-parser';
 import { ApolloServer } from "apollo-server-express";
+import cookieParser from 'cookie-parser';
+import cors from "cors";
+import "dotenv/config";
+import express from "express";
+import { verify } from "jsonwebtoken";
+import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
-import { UserResolver } from "./resolvers/UserResolver";
-import { verify } from "jsonwebtoken";
-import { createAccessToken, createRefreshToken } from "./helpers/TokenProvider";
 import { User } from "./entity/User";
-import { setRefreshToken } from "./helpers/CookieManager";
 import { _constants } from "./helpers/Constants";
+import { setRefreshToken } from "./helpers/CookieManager";
+import { createAccessToken, createRefreshToken } from "./helpers/TokenProvider";
+import { UserResolver } from "./resolvers/UserResolver";
 
 
 (async () => {
     const app = express();
-    const port = _constants.AppServerPort;
+    app.use(
+        cors({
+            credentials: true,
+            origin: "http://localhost:3000"
+        })
+    );
+    app.use(cookieParser());
+
+    const port = _constants.appServerPort;
     await createConnection();
 
     const apolloServer = new ApolloServer({
@@ -25,9 +34,7 @@ import { _constants } from "./helpers/Constants";
         context: ({ req, res }) => ({ req, res })
     });
 
-    apolloServer.applyMiddleware({ app });
-
-    app.use(cookieParser());
+    apolloServer.applyMiddleware({ app, cors: false });
 
     app.get("/",
         (_request, response) => {

@@ -27,7 +27,7 @@ export class UserResolver {
     }
 
     @Mutation(() => LoginResponse)
-    async login(
+    async Login(
         @Arg('email') email: string,
         @Arg('password') password: string,
         @Ctx() { res }: IExpressContext
@@ -52,7 +52,7 @@ export class UserResolver {
     }
 
     @Mutation(() => Boolean)
-    async forgotPassword(
+    async ForgotPassword(
         @Arg('userId', () => Int) userId: number) {
 
         // revoke refresh token
@@ -64,7 +64,7 @@ export class UserResolver {
     }
 
     @Mutation(() => Boolean)
-    async register(@Arg('email') email: string, @Arg('password') password: string, ) {
+    async Register(@Arg('email') email: string, @Arg('password') password: string, ) {
         const hashedPassword = await hash(password, 8);
 
         try {

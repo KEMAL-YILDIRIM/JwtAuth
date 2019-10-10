@@ -1,7 +1,7 @@
 export const _constants = {
-    JwtTokenName: "jwtAuthCookie",
+    jwtTokenName: "jwtAuthCookie",
     accessTokenExpirationTime: "3d",
     refreshTokenExpirationTime: "5d",
-    AppServerPort: 4000,
+    appServerPort: 4000,
 
 }
