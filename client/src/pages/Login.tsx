@@ -24,7 +24,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
                 setAccessToken(response.data.Login.accessToken);
             }
 
-            console.log(`Login response : ${response}`);
+            console.log({ LoginResponse: response });
             history.push("/");
         }}>
             <div>

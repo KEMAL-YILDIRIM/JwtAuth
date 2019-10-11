@@ -7,13 +7,13 @@ interface Props {
 
 export const Authenticate: React.FC<Props> = () => {
     const { data, error, loading } = useAuthenticateQuery({
-        fetchPolicy:"network-only"
+        fetchPolicy: "network-only"
     });
 
     if (loading) return <div>loading...</div>
     if (!data) return <div>Response doesn't have any data to show.</div>
     if (error) {
-        console.log(error)
+        console.log({ AuthenticateError: error })
         return <div>There is an error occured!</div>
     }
 

@@ -4,19 +4,20 @@ let _accessToken: string = "";
 
 export function setAccessToken(token: string) {
     _accessToken = token;
-    console.log(`Set acess token : ${token}`)
     return true;
 }
 
 export function getAccessToken() {
-    console.log(`Get acess token : ${_accessToken}`)
     return _accessToken;
 }
 
-export function isTokenExpired() {
-    if (!_accessToken) return true;
+export function isTokenValidOrUndefined() {
+    if(!_accessToken) return true;
+    console.log({AccessToken : _accessToken});
 
     const { exp } = jwtDecode(_accessToken);
+    console.log({expiration : exp});
+
     if (exp * 1000 <= Date.now()) return true;
 
     return false;

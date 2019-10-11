@@ -4,12 +4,12 @@ import { ApolloClient } from 'apollo-client';
 import { ApolloLink, Observable } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 import { HttpLink } from 'apollo-link-http';
+import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { App } from "./App";
-import { getAccessToken, isTokenExpired, setAccessToken } from './helpers/AccessToken';
+import { getAccessToken, isTokenValidOrUndefined, setAccessToken } from './helpers/AccessToken';
 import { _constants } from './helpers/Constants';
-import { TokenRefreshLink } from 'apollo-link-token-refresh'
 
 const cache = new InMemoryCache({});
 
@@ -46,14 +46,14 @@ const client = new ApolloClient({
   link: ApolloLink.from([
     new TokenRefreshLink({
       accessTokenField: "accessToken",
-      isTokenValidOrUndefined: () => !isTokenExpired() || typeof getAccessToken() !== 'string',
+      isTokenValidOrUndefined: () => isTokenValidOrUndefined(),
       fetchAccessToken: () => {
         return fetch(_constants.refreshTokenUri, {
           method: "POST",
           credentials: "include"
         });
       },
-      handleFetch: accessToken => {        
+      handleFetch: accessToken => {
         setAccessToken(accessToken);
       },
       handleError: err => {
@@ -67,10 +67,10 @@ const client = new ApolloClient({
     }),
     onError(({ graphQLErrors, networkError }) => {
       if (graphQLErrors) {
-        console.log(`GraphQL Error : ${graphQLErrors}`);
+        console.log({ GraphQLErrors: graphQLErrors });
       }
       if (networkError) {
-        console.log(`Network Error : ${networkError}`);
+        console.log({ NetworkError: networkError });
       }
     }),
     requestLink,

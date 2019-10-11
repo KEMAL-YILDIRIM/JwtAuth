@@ -43,7 +43,8 @@ import { UserResolver } from "./resolvers/UserResolver";
 
     app.post("/refresh_token", async (_request, _response) => {
         const token = _request.cookies.jwtAuthCookie;
-        if (!token) {
+        console.info({refreshTokenInfo:token})
+        if (!token) {            
             return _response.send({
                 ok: false,
                 accessToken: ''
@@ -62,6 +63,7 @@ import { UserResolver } from "./resolvers/UserResolver";
         }
 
         const user = await User.findOne({ id: payload.userId });
+        console.info({refreshTokenUser:user, payloadTokenVersion : payload.tokenVersion})
         if (!user)
             return _response.send({
                 ok: false,
