@@ -16,7 +16,7 @@ export const IsAuthenticated: MiddlewareFn<IExpressContext> = ({ context }, next
         context.payload = payload as any;
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         throw new Error('Not authenticated!');
     }
 

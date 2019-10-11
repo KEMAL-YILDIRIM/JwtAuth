@@ -19,7 +19,7 @@ import { UserResolver } from "./resolvers/UserResolver";
     app.use(
         cors({
             credentials: true,
-            origin: "http://localhost:3000"
+            origin: _constants.origin
         })
     );
     app.use(cookieParser());
@@ -54,7 +54,7 @@ import { UserResolver } from "./resolvers/UserResolver";
         try {
             payload = verify(token, process.env.REFRESH_TOKEN_SECRET!)
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return _response.send({
                 ok: false,
                 accessToken: ''

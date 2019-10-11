@@ -18,7 +18,7 @@ export const Register: React.FC<RouteComponentProps> = ({history}) => {
                     password
                 }
             });
-            console.log(response);
+            console.log(`Register response : ${response}`);
             history.push("/");
         }}>
             <div>
