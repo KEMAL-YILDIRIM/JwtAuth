@@ -43,8 +43,8 @@ import { UserResolver } from "./resolvers/UserResolver";
 
     app.post("/refresh_token", async (_request, _response) => {
         const token = _request.cookies.jwtAuthCookie;
-        console.info({refreshTokenInfo:token})
-        if (!token) {            
+        if (!token) {
+            console.error({ TokenMissingInRefreshCookie: token })
             return _response.send({
                 ok: false,
                 accessToken: ''
@@ -55,7 +55,7 @@ import { UserResolver } from "./resolvers/UserResolver";
         try {
             payload = verify(token, process.env.REFRESH_TOKEN_SECRET!)
         } catch (error) {
-            console.error(error);
+            console.error({ PayloadTokenVerifyError: error });
             return _response.send({
                 ok: false,
                 accessToken: ''
@@ -63,18 +63,21 @@ import { UserResolver } from "./resolvers/UserResolver";
         }
 
         const user = await User.findOne({ id: payload.userId });
-        console.info({refreshTokenUser:user, payloadTokenVersion : payload.tokenVersion})
-        if (!user)
+        if (!user) {
+            console.error({ PayloadUserNotFound: user });
             return _response.send({
                 ok: false,
                 accessToken: ''
             });
+        }
 
-        if (user.tokenVersion !== payload.tokenVersion)
+        if (user.tokenVersion !== payload.tokenVersion) {
+            console.error({ UserTokenVersion: user.tokenVersion, payloadTokenVersion: payload.tokenVersion });
             return _response.send({
                 ok: false,
                 accessToken: ''
             });
+        }
 
         setRefreshToken(_response, createRefreshToken(user));
 

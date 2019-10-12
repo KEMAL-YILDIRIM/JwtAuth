@@ -11,11 +11,12 @@ export const Authenticate: React.FC<Props> = () => {
     });
 
     if (loading) return <div>loading...</div>
-    if (!data) return <div>Response doesn't have any data to show.</div>
     if (error) {
-        console.log({ AuthenticateError: error })
-        return <div>There is an error occured!</div>
+        console.log({ AuthenticationError: error })
+        return <div>Not Authenticated!</div>
     }
+    
+    if (!data) return <div>Response doesn't have any data to show.</div>
 
     return (
         <div>

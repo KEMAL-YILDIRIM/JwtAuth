@@ -12,13 +12,17 @@ export function getAccessToken() {
 }
 
 export function isTokenValidOrUndefined() {
-    if(!_accessToken) return true;
-    console.log({AccessToken : _accessToken});
+    if (!_accessToken) {
+        console.log({ AccessTokenUndefined: _accessToken });
+        return true;
+    }
 
     const { exp } = jwtDecode(_accessToken);
-    console.log({expiration : exp});
 
-    if (exp * 1000 <= Date.now()) return true;
+    if (exp * 1000 <= Date.now()) {
+        console.log({ accessTokenExpirationDate: exp, DateNow: Date.now() });
+        return true;
+    }
 
     return false;
 }

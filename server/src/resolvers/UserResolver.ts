@@ -7,6 +7,7 @@ import { createAccessToken, createRefreshToken } from '../helpers/TokenProvider'
 import { IExpressContext } from '../interfaces/IExpressContext';
 import { IsAuthenticated } from '../Middlewares/IsAuthenticated';
 import { LoginResponse } from '../typeGraphQL/LoginResponse';
+import { verify } from 'jsonwebtoken';
 
 @Resolver()
 export class UserResolver {
@@ -24,6 +25,28 @@ export class UserResolver {
     @Query(() => [User])
     GetAllUsers() {
         return User.find();
+    }
+
+    @Query(() => User, { nullable: true })
+    Me(
+        @Ctx() context: IExpressContext
+    ) {
+        const authorization = context.req.headers['authorization'];
+
+        if (!authorization) {
+            return null;
+        }
+
+        try {
+
+            const token = authorization.split(' ')[1];
+            const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
+            context.payload = payload as any;
+            return User.findOne(payload.userId)
+        } catch (error) {
+            console.error(error);
+            throw new Error('Me Failed!');
+        }
     }
 
     @Mutation(() => LoginResponse)
@@ -47,8 +70,16 @@ export class UserResolver {
         setRefreshToken(res, createRefreshToken(user));
 
         return {
-            accessToken: createAccessToken(user)
+            accessToken: createAccessToken(user),
+            user
         };
+    }
+
+    @Mutation(() => Boolean)
+    async Logout(@Ctx() {res}: IExpressContext) {
+
+        setRefreshToken(res,"");
+        return true;
     }
 
     @Mutation(() => Boolean)
